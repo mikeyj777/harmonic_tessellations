@@ -67,6 +67,8 @@ const HarmonicTessellations = () => {
 
         // Initialize audio system
         await managersRef.current.audio.initialize();
+
+        console.log('Initialization complete');
       } catch (err) {
         setError('Failed to initialize system components');
         console.error('Initialization error:', err);
@@ -88,6 +90,7 @@ const HarmonicTessellations = () => {
    * Handle pattern updates and audio scheduling
    */
   useEffect(() => {
+    console.log("useEffect.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted);
     if (!isPlaying || !managersRef.current.pattern) return;
 
     const animate = (timestamp) => {
@@ -136,6 +139,7 @@ const HarmonicTessellations = () => {
    * SVG Pattern Renderer Component
    */
   const PatternRenderer = React.memo(({ vertices }) => {
+    console.log("PatternRenderer", vertices)
     if (!vertices.length) return null;
 
     const points = vertices
@@ -169,6 +173,7 @@ const HarmonicTessellations = () => {
     return (
       <div className="harmonic-container">
         <div className="error-container">
+        { console.log(error) }
           <h3>Error</h3>
           <p>{error}</p>
           <button 
@@ -188,6 +193,7 @@ const HarmonicTessellations = () => {
   return (
     <div className="harmonic-container">
       <div className="visualizer">
+        { console.log("vertices ", vertices) }
         <PatternRenderer vertices={vertices} />
       </div>
       <Controls
@@ -210,19 +216,18 @@ const HarmonicTessellations = () => {
 };
 
 export default HarmonicTessellations;
-```
 
-Tom7 Says: "Notice how we're using refs for the managers instead of state. 
-This is because managers are stateful objects that we don't want to 
-re-create on every render. It's like keeping your synthesizer plugged in 
-even when you're not playing it. Also, the cleanup functions are crucial - 
-always clean up your audio contexts, or they'll haunt your browser like 
-friendly but resource-hungry ghosts."
 
-Would you like me to:
-1. Explain any particular section in more detail?
-2. Add more error handling?
-3. Add performance optimizations?
-4. Add additional features?
+// Tom7 Says: "Notice how we're using refs for the managers instead of state. 
+// This is because managers are stateful objects that we don't want to 
+// re-create on every render. It's like keeping your synthesizer plugged in 
+// even when you're not playing it. Also, the cleanup functions are crucial - 
+// always clean up your audio contexts, or they'll haunt your browser like 
+// friendly but resource-hungry ghosts."
 
-```
+// Would you like me to:
+// 1. Explain any particular section in more detail?
+// 2. Add more error handling?
+// 3. Add performance optimizations?
+// 4. Add additional features?
+

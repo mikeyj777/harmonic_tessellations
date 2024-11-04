@@ -10,7 +10,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {console.log("App.js")}
         <Route path="/" element={<HarmonicTessellations />} />
         {/* <Route path="/test" element={<TestHarmonicTessellations />} /> */}
         {/* <Route path="/hooks-tester" element={<HooksTester />} /> */}

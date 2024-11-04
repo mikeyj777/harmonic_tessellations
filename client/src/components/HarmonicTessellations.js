@@ -68,7 +68,6 @@ const HarmonicTessellations = () => {
         // Initialize audio system
         await managersRef.current.audio.initialize();
 
-        console.log('Initialization complete');
       } catch (err) {
         setError('Failed to initialize system components');
         console.error('Initialization error:', err);
@@ -90,14 +89,19 @@ const HarmonicTessellations = () => {
    * Handle pattern updates and audio scheduling
    */
   useEffect(() => {
-    console.log("useEffect.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted);
+    // console.log("useEffect.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted);
     if (!isPlaying || !managersRef.current.pattern) return;
 
     const animate = (timestamp) => {
+      
       const { pattern, audio, performance } = managersRef.current;
-
-      if (performance.shouldRenderFrame(timestamp)) {
+      // console.log("animate.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted, "  timestamp:", timestamp, " pattern:", pattern, " audio:", audio, " performance:", performance);
+      // console.log("performance.shouldRenderFrame(timestamp) ",  performance.shouldRenderFrame(timestamp));
+      const perf_should_render_frame = performance.shouldRenderFrame(timestamp);
+      // console.log("perf_should_render_frame ",  perf_should_render_frame);
+      if (perf_should_render_frame) {
         // Generate new pattern
+        // console.log("animate.  generating pattern");
         const newVertices = pattern.generatePattern({
           complexity,
           transformation
@@ -193,7 +197,6 @@ const HarmonicTessellations = () => {
   return (
     <div className="harmonic-container">
       <div className="visualizer">
-        { console.log("vertices ", vertices) }
         <PatternRenderer vertices={vertices} />
       </div>
       <Controls

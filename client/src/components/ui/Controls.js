@@ -18,6 +18,7 @@ const ControlButton = ({ label, active, onClick, className = '' }) => (
   >
     {label}
   </button>
+  
 );
 
 /**
@@ -97,7 +98,9 @@ const Controls = ({
   
   return (
     <div className="controls-container">
+      { console.log("Controls.js") }
       <div className="playback-controls">
+      { console.log("playback-controls") }
         <ControlButton
           label={isPlaying ? "Pause" : "Play"}
           active={isPlaying}

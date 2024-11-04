@@ -8,14 +8,14 @@
  * desktop Chrome and don't need fancy responsive stuff yet.
  */
 
-.harmonic-container {
-  /* Main container for our experience */
-  width: 800px;          /* Fixed width as per specs */
-  height: 600px;         /* Fixed height as per specs */
-  position: relative;    /* Container for absolute positioning */
-  margin: 0 auto;        /* Center it on the page */
-  background-color: #f8f8f8;  /* Light grey background */
-  overflow: hidden;      /* Keep everything contained */
+ .harmonic-container {
+  width: 1200px;  /* Match VIEW_CONFIG width */
+  height: 600px;
+  position: relative;
+  margin: 0 auto;
+  background-color: #f8f8f8;
+  overflow: hidden;
+  border: 1px solid #ccc;
 }
 
 .visualizer {

@@ -20,7 +20,7 @@ import './HarmonicTessellations.css';
  * These dimensions are optimized for desktop viewing.
  */
 const VIEW_CONFIG = {
-  width: 800,    // Width that gives us room to breathe
+  width: 1200,    // Width that gives us room to breathe
   height: 600,   // Height that maintains good proportions
   padding: 20    // Space around our patterns
 };

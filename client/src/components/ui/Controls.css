@@ -1,12 +1,22 @@
 /* Controls.css */
 
+.visualizer {
+  width: 100%;
+  height: calc(100% - 80px);  /* Reserve space for controls */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
 .controls-container {
+  position: absolute;  /* Added */
+  bottom: 0;          /* Added */
+  width: 100%;
+  height: 80px;       /* Fixed height */
+  background-color: #2c3e50;  /* Dark background for controls */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  width: 100%;
-  height: 100%;
+  padding: 0 40px;
 }
 
 .playback-controls {
@@ -80,11 +90,21 @@
   align-items: center;
   gap: 5px;
   color: white;
+  min-width: 250px;  /* Increased from previous value to ensure enough space */
+  margin-right: 20px;  /* Add right margin to prevent edge cutting */
+  overflow: visible;  /* Ensure content isn't being cut */
 }
 
 .transformation-buttons {
   display: flex;
-  gap: 5px;
+  gap: 10px;  /* Increased gap between buttons */
+  width: 100%;  /* Ensure full width usage */
+  justify-content: center;  /* Center the buttons */
+}
+
+.transformation-buttons .control-button {
+  min-width: 100px;  /* Ensure buttons are wide enough for text */
+  white-space: nowrap;  /* Prevent text wrapping */
 }
 
 label {

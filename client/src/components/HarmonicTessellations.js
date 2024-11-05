@@ -70,7 +70,6 @@ const HarmonicTessellations = () => {
 
       } catch (err) {
         setError('Failed to initialize system components');
-        console.error('Initialization error:', err);
       }
     };
 
@@ -89,13 +88,6 @@ const HarmonicTessellations = () => {
    * Handle pattern updates and audio scheduling
    */
   useEffect(() => {
-  console.log("Animation useEffect triggered:", { 
-    isPlaying, 
-    complexity, 
-    transformation, 
-    isMuted,
-    hasPattern: !!managersRef.current.pattern
-  });
 
   if (!isPlaying || !managersRef.current.pattern) {
     console.log("Animation not starting - conditions not met");
@@ -177,7 +169,6 @@ const HarmonicTessellations = () => {
    * SVG Pattern Renderer Component
    */
   const PatternRenderer = React.memo(({ vertices }) => {
-    console.log("PatternRenderer render with vertices:", vertices);
   
     if (!vertices.length) {
       console.log("No vertices to render");
@@ -196,8 +187,7 @@ const HarmonicTessellations = () => {
     const height = maxY - minY;
   
     const viewBox = `${minX} ${minY} ${width} ${height}`;
-    console.log("Calculated viewBox:", { viewBox, bounds: { minX, maxX, minY, maxY, width, height }});
-  
+
     return (
       <svg
         className="pattern-svg"

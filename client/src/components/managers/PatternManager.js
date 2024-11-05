@@ -8,11 +8,9 @@ class PatternManager {
     };
     
     this.cache = new Map();
-    console.log("PatternManager initialized with config:", this.config);
   }
 
   generatePattern = ({ complexity, transformation }) => {
-    console.log("generatePattern called with:", { complexity, transformation });
     
     const cacheKey = `${complexity}-${transformation}`;
     if (this.cache.has(cacheKey)) {

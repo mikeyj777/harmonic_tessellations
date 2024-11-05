@@ -12,7 +12,7 @@ class PerformanceManager {
       ...config
     };
     
-    this.lastFrameTime = performance.now();  // Initialize with current time
+    this.lastFrameTime = window.performance.now();  // Initialize with current time
     this.frameCount = 0;
     this.fps = 60;
     this.isActive = true;  // Track if manager is active
@@ -68,7 +68,7 @@ class PerformanceManager {
    * Reset performance metrics
    */
   reset = () => {
-    this.lastFrameTime = performance.now();
+    this.lastFrameTime = window.performance.now();
     this.frameCount = 0;
     this.fps = 60;
   };

@@ -89,44 +89,78 @@ const HarmonicTessellations = () => {
    * Handle pattern updates and audio scheduling
    */
   useEffect(() => {
-    // console.log("useEffect.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted);
-    if (!isPlaying || !managersRef.current.pattern) return;
+  console.log("Animation useEffect triggered:", { 
+    isPlaying, 
+    complexity, 
+    transformation, 
+    isMuted,
+    hasPattern: !!managersRef.current.pattern
+  });
 
-    const animate = (timestamp) => {
+  if (!isPlaying || !managersRef.current.pattern) {
+    console.log("Animation not starting - conditions not met");
+    return;
+  }
+
+  let frameCount = 0;
+  let lastRender = window.performance.now();
+
+  const animate = (timestamp) => {
+    frameCount++;
+    const deltaTime = timestamp - lastRender;
+    
+    console.log(`Animation frame ${frameCount}:`, {
+      timestamp,
+      deltaTime,
+      fps: 1000 / deltaTime
+    });
+
+    const { pattern, audio, performance } = managersRef.current;
+    
+    if (performance.shouldRenderFrame(timestamp)) {
+      console.log("Generating new pattern");
       
-      const { pattern, audio, performance } = managersRef.current;
-      // console.log("animate.  isPlaying:", isPlaying, "  complexity:", complexity, "  transformation:", transformation, "  isMuted:", isMuted, "  timestamp:", timestamp, " pattern:", pattern, " audio:", audio, " performance:", performance);
-      // console.log("performance.shouldRenderFrame(timestamp) ",  performance.shouldRenderFrame(timestamp));
-      const perf_should_render_frame = performance.shouldRenderFrame(timestamp);
-      // console.log("perf_should_render_frame ",  perf_should_render_frame);
-      if (perf_should_render_frame) {
-        // Generate new pattern
-        // console.log("animate.  generating pattern");
-        const newVertices = pattern.generatePattern({
-          complexity,
-          transformation
-        });
+      // Track pattern generation time
+      const startGeneration = window.performance.now();
+      const newVertices = pattern.generatePattern({
+        complexity,
+        transformation
+      });
+      const generationTime = window.performance.now() - startGeneration;
+      
+      console.log("Pattern generated:", {
+        vertexCount: newVertices.length,
+        generationTime
+      });
 
-        setVertices(newVertices);
+      setVertices(newVertices);
 
-        // Schedule audio if not muted
-        if (!isMuted && audio) {
-          audio.scheduleNotes(newVertices);
-        }
+      if (!isMuted && audio) {
+        console.log("Scheduling audio");
+        audio.scheduleNotes(newVertices);
       }
+    }
 
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
+    lastRender = timestamp;
     animationFrameRef.current = requestAnimationFrame(animate);
+  };
 
-    // Cleanup animation frame
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isPlaying, complexity, transformation, isMuted]);
+  console.log("Starting animation loop");
+  animationFrameRef.current = requestAnimationFrame(animate);
+
+  return () => {
+    console.log("Cleaning up animation:", {
+      frameCount,
+      lastRender,
+      hasAnimationFrame: !!animationFrameRef.current
+    });
+    
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  };
+}, [isPlaying, complexity, transformation, isMuted]);
 
   /**
    * Handle reset action
@@ -143,28 +177,67 @@ const HarmonicTessellations = () => {
    * SVG Pattern Renderer Component
    */
   const PatternRenderer = React.memo(({ vertices }) => {
-    console.log("PatternRenderer", vertices)
-    if (!vertices.length) return null;
-
-    const points = vertices
-      .map(([x, y]) => `${x},${y}`)
-      .join(' ');
-
+    console.log("PatternRenderer render with vertices:", vertices);
+  
+    if (!vertices.length) {
+      console.log("No vertices to render");
+      return null;
+    }
+  
+    // Calculate bounds with padding
+    const padding = 50;  // Increased padding for visibility
+    const xs = vertices.map(([x]) => x);
+    const ys = vertices.map(([, y]) => y);
+    const minX = Math.min(...xs) - padding;
+    const maxX = Math.max(...xs) + padding;
+    const minY = Math.min(...ys) - padding;
+    const maxY = Math.max(...ys) + padding;
+    const width = maxX - minX;
+    const height = maxY - minY;
+  
+    const viewBox = `${minX} ${minY} ${width} ${height}`;
+    console.log("Calculated viewBox:", { viewBox, bounds: { minX, maxX, minY, maxY, width, height }});
+  
     return (
       <svg
-        ref={svgRef}
+        className="pattern-svg"
         width="100%"
         height="100%"
-        viewBox={`0 0 ${VIEW_CONFIG.width} ${VIEW_CONFIG.height - 80}`}
+        viewBox={viewBox}
         preserveAspectRatio="xMidYMid meet"
       >
-        <g transform={`translate(${VIEW_CONFIG.width/2} ${(VIEW_CONFIG.height-80)/2})`}>
+        {/* Debug grid */}
+        <defs>
+          <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#ccc" strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+  
+        {/* Debug axes */}
+        <line x1={minX} y1="0" x2={maxX} y2="0" stroke="red" strokeWidth="1" />
+        <line x1="0" y1={minY} x2="0" y2={maxY} stroke="blue" strokeWidth="1" />
+  
+        {/* Debug origin marker */}
+        <circle cx="0" cy="0" r="5" fill="purple" />
+  
+        {/* Pattern */}
+        <g className="pattern-group">
           <polygon
-            points={points}
-            fill="none"
-            stroke="#2c3e50"
-            strokeWidth="1"
+            className="pattern-polygon"
+            points={vertices.map(([x, y]) => `${x},${y}`).join(' ')}
           />
+  
+          {/* Debug vertex points */}
+          {vertices.map(([x, y], i) => (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="2"
+              className="vertex-point"
+            />
+          ))}
         </g>
       </svg>
     );
